@@ -65,7 +65,7 @@ global.config = {
 
     // Sistem bot
     system: {
-        alwaysOnline: falss, // Bot selalu berstatus "online"
+        alwaysOnline: false, // Bot selalu berstatus "online"
         autoMention: false, // Bot otomatis mention seseorang dalam pesan yang dikirim
         autoRead: false, // Bot baca pesan otomatis
         autoTypingOnCmd: true, // Tampilkan status "sedang mengetik" saat memproses perintah
