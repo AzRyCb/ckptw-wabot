@@ -15,7 +15,7 @@ global.config = {
         phoneNumber: "6281370317113", // Nomor telepon bot (opsional jika menggunakan QR code)
         thumbnail: "https://img.freepik.com/premium-vector/robot-icon-chat-bot-sign-support-service-concept-chatbot-character-flat-style_41737-796.jpg?w=1060", // Gambar thumbnail bot
         website: "https://chat.whatsapp.com/GQ6RHr5jPy920dPVTpq4uC", // Website untuk WhatsApp bot
-        groupJid: "120363391379200206@g.us" // JID untuk group bot (opsional jika tidak menggunakan requireBotGroupMembership)
+        groupJid: "120363391379200206" // JID untuk group bot (opsional jika tidak menggunakan requireBotGroupMembership)
     },
 
     // Pesan bot yang disesuaikan untuk situasi tertentu
