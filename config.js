@@ -98,6 +98,7 @@ global.config = {
         reportErrorToOwner: true, // Laporkan kesalahan ke owner bot
         restrict: false, // Batasi akses perintah
         requireBotGroupMembership: true, // Harus gabung grup bot
+        requireGroupSewa: false, // Harus sewa bot untuk bisa dipakai di grup
         selfOwner: false, // Bot jadi owner sendiri
         selfReply: true, // Bot bisa balas pesan bot sendiri
         timeZone: "Asia/Jakarta", // Zona waktu bot
