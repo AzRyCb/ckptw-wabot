@@ -33,7 +33,7 @@ module.exports = {
                 `${quote(`Model: ${cpus[0].model}`)}\n` +
                 `${quote(`Kecepatan: ${cpus[0].speed} MHz`)}\n` +
                 `${quote(`Cores: ${cpus.length}`)}\n` +
-                `${quote(`Muat Rata-Rata (1m, 5m, 15m): ${load.map(l => l.toFixed(2)).join(", ")}`)}\n` +
+                `${quote(`Muat Rata-Rata: ${load.map(l => l.toFixed(2)).join(", ")}`)}\n` +
                 `${quote("─────")}\n` +
                 `${quote(`Versi NodeJS: ${process.version}`)}\n` +
                 `${quote(`Platform: ${process.platform}`)}\n` +
@@ -47,7 +47,7 @@ module.exports = {
                 config.msg.footer
             );
         } catch (error) {
-            return await tools.cmd.handleError(ctx, error, false);
+            return await tools.cmd.handleError(ctx, error);
         }
     }
 };

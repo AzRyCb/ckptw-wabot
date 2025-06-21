@@ -2,6 +2,7 @@ const {
     quote
 } = require("@itsreimau/ckptw-mod");
 const axios = require("axios");
+const moment = require("moment-timezone");
 
 module.exports = {
     name: "weather",
@@ -19,30 +20,30 @@ module.exports = {
         );
 
         try {
-            const apiUrl = tools.api.createUrl("agatz", "/api/cuaca", {
-                message: input
+            const apiUrl = tools.api.createUrl("diibot", "/api/tools/cekcuaca", {
+                query: input
             });
-            const result = (await axios.get(apiUrl)).data.data;
+            const result = (await axios.get(apiUrl)).data.result;
 
             return await ctx.reply(
-                `${quote(`Lokasi: ${result.location.name}, ${result.location.region}, ${result.location.country}`)}\n` +
-                `${quote(`Latitude: ${result.location.lat}`)}\n` +
-                `${quote(`Longitude: ${result.location.lon}`)}\n` +
-                `${quote(`Zona Waktu: ${result.location.tz_id}`)}\n` +
-                `${quote(`Waktu Lokal: ${result.location.localtime}`)}\n` +
+                `${quote(`Lokasi: ${result.name}, ${result.sys.country}`)}\n` +
+                `${quote(`Koordinat: ${result.coord.lat}, ${result.coord.lon}`)}\n` +
+                `${quote(`Terakhir diperbarui: ${moment.unix(result.dt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm")} WIB`)}\n` +
                 `${quote("─────")}\n` +
-                `${quote(`Cuaca: ${result.current.condition.text}`)}\n` +
-                `${quote(`Suhu Saat Ini: ${result.current.temp_c}°C (${result.current.temp_f}°F)`)}\n` +
-                `${quote(`Terasa Seperti: ${result.current.feelslike_c}°C (${result.current.feelslike_f}°F)`)}\n` +
-                `${quote(`Kelembaban: ${result.current.humidity}%`)}\n` +
-                `${quote(`Kecepatan Angin: ${result.current.wind_kph} kph (${result.current.wind_mph} mph)`)}\n` +
-                `${quote(`Arah Angin: ${result.current.wind_dir} (${result.current.wind_degree}°)`)}\n` +
-                `${quote(`Tekanan Udara: ${result.current.pressure_mb} mb (${result.current.pressure_in} in)`)}\n` +
-                `${quote(`Curah Hujan: ${result.current.precip_mm} mm (${result.current.precip_in} in)`)}\n` +
-                `${quote(`Kondisi Langit: ${result.current.cloud}% awan`)}\n` +
-                `${quote(`Indeks UV: ${result.current.uv}`)}\n` +
-                `${quote(`Jarak Pandang: ${result.current.vis_km} km (${result.current.vis_miles} mil)`)}\n` +
-                `${quote(`Hembusan Angin: ${result.current.gust_kph} kph (${result.current.gust_mph} mph)`)}\n` +
+                `${quote(`Cuaca: ${tools.msg.ucwords(result.weather[0].description)}`)}\n` +
+                `${quote(`Suhu: ${result.main.temp}°C (Min ${result.main.temp_min}°C | Max ${result.main.temp_max}°C)`)}\n` +
+                `${quote(`Terasa seperti: ${result.main.feels_like}°C`)}\n` +
+                `${quote(`Kelembaban: ${result.main.humidity}%`)}\n` +
+                `${quote(`Tekanan Udara: ${result.main.pressure} hPa`)}\n` +
+                `${quote("─────")}\n` +
+                `${quote(`Angin: ${result.wind.speed} m/s (${(result.wind.speed * 3.6).toFixed(1)} km/h)`)}\n` +
+                `${quote(`Arah Angin: ${result.wind.deg}°`)}\n` +
+                `${quote(`Hembusan: ${result.wind.gust} m/s`)}\n` +
+                `${quote("─────")}\n` +
+                `${quote(`Awan: ${result.clouds.all}%`)}\n` +
+                `${quote(`Jarak Pandang: ${(result.visibility/1000).toFixed(1)} km`)}\n` +
+                `${quote(`Matahari Terbit: ${moment.unix(result.sys.sunrise).tz("Asia/Jakarta").format("HH:mm")} WIB`)}\n` +
+                `${quote(`Matahari Terbenam: ${moment.unix(result.sys.sunset).tz("Asia/Jakarta").format("HH:mm")} WIB`)}\n` +
                 "\n" +
                 config.msg.footer
             );

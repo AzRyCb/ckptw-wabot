@@ -7,6 +7,9 @@ module.exports = {
     name: "chatgpt",
     aliases: ["ai", "cgpt", "chatai", "gpt", "openai"],
     category: "ai-chat",
+    permissions: {
+        coin: 10
+    },
     code: async (ctx) => {
         const input = ctx.args.join(" ") || ctx.quoted?.conversation || Object.values(ctx.quoted).map(q => q?.text || q?.caption).find(Boolean) || null;
 

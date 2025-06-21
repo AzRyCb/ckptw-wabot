@@ -14,7 +14,7 @@ module.exports = {
         const input = parseInt(ctx.args[0], 10) || null;
 
         if (!input) return await ctx.reply(
-            `${quote(`${tools.msg.generateInstruction(["send"], ["text"])}`)}\n` +
+            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
             quote(tools.msg.generateCmdExample(ctx.used, "8"))
         );
 
@@ -24,7 +24,7 @@ module.exports = {
 
             return await ctx.reply(quote(`✅ Berhasil mengubah max warnings!`));
         } catch (error) {
-            return await tools.cmd.handleError(ctx, error, false);
+            return await tools.cmd.handleError(ctx, error);
         }
     }
 };

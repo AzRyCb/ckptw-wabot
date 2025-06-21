@@ -3,8 +3,8 @@ const {
 } = require("@itsreimau/ckptw-mod");
 
 module.exports = {
-    name: "listpremium",
-    aliases: ["listprem"],
+    name: "listpremiumuser",
+    aliases: ["listprem", "listpremium"],
     category: "owner",
     permissions: {
         owner: true
@@ -30,13 +30,13 @@ module.exports = {
             });
 
             return await ctx.reply({
-                text: `${resultText}` +
+                text: `${resultText || config.msg.notFound}` +
                     "\n" +
                     config.msg.footer,
                 mentions: userMentions
             });
         } catch (error) {
-            return await tools.cmd.handleError(ctx, error, false);
+            return await tools.cmd.handleError(ctx, error);
         }
     }
 };

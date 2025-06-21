@@ -1,6 +1,7 @@
 const {
     quote
 } = require("@itsreimau/ckptw-mod");
+const axios = require("axios");
 const mime = require("mime-types");
 
 module.exports = {
@@ -20,16 +21,21 @@ module.exports = {
 
         try {
             const [nama1, nama2] = input.split("|");
-            const result = tools.api.createUrl("nirkyy", "/api/v1/kecocokan", {
+            const apiUrl = tools.api.createUrl("siputzx", "/api/primbon/kecocokan_nama_pasangan", {
                 nama1: nama2 ? nama1 : ctx.sender.pushName,
                 nama2: nama2 || nama1
             });
+            const result = (await axios.get(apiUrl)).data.data;
 
             return await ctx.reply({
                 image: {
-                    url: result
+                    url: result.gambar
                 },
-                mimetype: mime.lookup("jpg")
+                mimetype: mime.lookup("png"),
+                caption: `${quote(`Sisi Positif: ${result.sisi_positif}`)}\n` +
+                    `${quote(`Sisi Negatif: ${result.sisi_negatif}`)}\n` +
+                    "\n" +
+                    config.msg.footer
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

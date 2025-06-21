@@ -19,10 +19,10 @@ module.exports = {
         );
 
         try {
-            const apiUrl = tools.api.createUrl("agatz", "/api/spotify", {
-                message: input
+            const apiUrl = tools.api.createUrl("archive", "/api/search/spotify", {
+                query: input
             });
-            const result = (await axios.get(apiUrl)).data.data;
+            const result = (await axios.get(apiUrl)).data.result;
 
             const resultText = result.map(r =>
                 `${quote(`Judul: ${r.trackName}`)}\n` +
@@ -33,7 +33,7 @@ module.exports = {
                 `${quote("─────")}\n`
             );
             return await ctx.reply(
-                `${resultText}\n` +
+                `${resultText || config.msg.notFound}\n` +
                 "\n" +
                 config.msg.footer
             );

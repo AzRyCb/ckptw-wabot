@@ -19,23 +19,23 @@ module.exports = {
         );
 
         try {
-            const apiUrl = tools.api.createUrl("agatz", "/api/npm", {
-                message: input
+            const apiUrl = tools.api.createUrl("archive", "/api/search/npmjs", {
+                query: input
             });
-            const result = (await axios.get(apiUrl)).data.data;
+            const result = (await axios.get(apiUrl)).data.result;
 
             const resultText = result.map(r =>
                 `${quote(`Nama: ${r.name}`)}\n` +
-                `${quote(`Versi: ${r.version}`)}\n` +
                 `${quote(`Dekripsi: ${r.description}`)}\n` +
-                `${quote(`Author: ${r.author}`)}\n` +
+                `${quote(`Pembuat: ${r.author}`)}\n` +
+                `${quote(`Versi: ${r.version}`)}\n` +
                 `${quote(`URL: ${r.npmLink}`)}`
             ).join(
                 "\n" +
                 `${quote("─────")}\n`
             );
             return await ctx.reply(
-                `${resultText}\n` +
+                `${resultText || config.msg.notFound}\n` +
                 "\n" +
                 config.msg.footer
             );

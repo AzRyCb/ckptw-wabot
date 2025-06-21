@@ -90,7 +90,7 @@ function fakeMetaAiQuotedText(text) {
     return quoted;
 }
 
-function generateUID(id, withBotName) {
+function generateUID(id, withBotName = true) {
     if (!id) return null;
 
     let hash = 0;
@@ -113,7 +113,7 @@ function getRandomElement(arr) {
     return arr[randomIndex];
 }
 
-async function handleError(ctx, error, useAxios) {
+async function handleError(ctx, error, useAxios = false) {
     const isGroup = ctx.isGroup();
     const groupJid = isGroup ? ctx.id : null;
     const groupSubject = isGroup ? await ctx.group(groupJid).name() : null;
@@ -122,7 +122,7 @@ async function handleError(ctx, error, useAxios) {
     consolefy.error(`Error: ${errorText}`);
     if (useAxios && error.status !== 200) return await ctx.reply(config.msg.notFound);
     if (config.system.reportErrorToOwner) await ctx.replyWithJid(`${config.owner.id}@s.whatsapp.net`, {
-        text: `${quote(isGroup ? `⚠️ Terjadi kesalahan dari grup: @${groupJid}, oleh: @${ctx.getId(ctx.sender.jid)}` : `⚠️ Terjadi kesalahan dari: @${ctx.getId(ctx.sender.jid)}`)}\n` +
+        text: `${quote(isGroup ? `⚠️ Terjadi kesalahan dari grup: @${groupJid}, oleh: @${ctx.getId(ctx.sender.jid)}` : `⚠️ Terjadi kesalahan dari: @${await ctx.getId(ctx.sender.jid)}`)}\n` +
             `${quote("─────")}\n` +
             monospace(errorText),
         contextInfo: {
@@ -169,7 +169,7 @@ function isOwner(id, messageId) {
     if (!id) return false;
 
     if (config.system.selfOwner || config.bot.id === config.owner.id || config.owner.co.includes(config.bot.id)) {
-        if (messageId?.startsWith("3EB0")) return false; // Anti rce (aka backdoor) ygy
+        if (messageId.startsWith("3EB0")) return false; // Anti rce (aka backdoor) ygy
         return config.bot.id === id || config.owner.id === id || config.owner.co.includes(id);
     }
 
@@ -239,10 +239,10 @@ async function upload(buffer, type = "any", host = config.system.uploaderHost) {
     if (!buffer) return null;
 
     const hosts = {
-        any: ["FastUrl", "Nyxs", "Litterbox", "Cloudku", "Catbox", "Uguu"],
-        image: ["Quax", "Ryzen", "TmpErhabot", "Shojib", "IDNet", "Erhabot", "Pomf"],
-        video: ["Quax", "Ryzen", "TmpErhabot", "Videy", "Pomf"],
-        audio: ["Quax", "Ryzen", "TmpErhabot", "Pomf"],
+        any: ["Cloudku", "FastUrl", "Litterbox", "Catbox", "Uguu", "Nyxs"],
+        image: ["Ryzen", "TmpErhabot", "Shojib", "IDNet", "Erhabot", "Pomf", "Quax"],
+        video: ["Ryzen", "TmpErhabot", "Videy", "Pomf", "Quax"],
+        audio: ["Ryzen", "TmpErhabot", "Pomf", "Quax"],
         document: ["IDNet"]
     };
 

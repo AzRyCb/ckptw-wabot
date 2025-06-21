@@ -4,7 +4,7 @@ const {
 const axios = require("axios");
 
 module.exports = {
-    name: "bard",
+    name: "xdash",
     category: "ai-chat",
     permissions: {
         coin: 10
@@ -19,10 +19,10 @@ module.exports = {
         );
 
         try {
-            const apiUrl = tools.api.createUrl("diibot", "/api/ai/bard", {
+            const apiUrl = tools.api.createUrl("bk9", "/ai/ai-search-3", {
                 q: input
             });
-            const result = (await axios.get(apiUrl)).data.result.message;
+            const result = (await axios.get(apiUrl)).data.BK9;
 
             return await ctx.reply(result);
         } catch (error) {
