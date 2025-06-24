@@ -15,12 +15,13 @@ module.exports = {
         if (!groupJid) return await ctx.reply(
             `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
             `${quote(tools.msg.generateCmdExample(ctx.used, "1234567890"))}\n` +
-            quote(tools.msg.generateNotes(["Gunakan di grup untuk otomatis menghapus sewa grup tersebut."]))
+            `${quote(tools.msg.generateNotes(["Gunakan di grup untuk otomatis menghapus sewa grup tersebut."]))}\n` +
+            quote(tools.msg.generatesFlagInfo({
+                "-s": "Tetap diam dengan tidak menyiarkan ke orang yang relevan"
+            }))
         );
 
-        const groupMetadata = await ctx.group(groupJid).metadata() || null;
-
-        if (!groupMetadata) return await ctx.reply(quote("❎ Grup tidak valid atau bot tidak ada di grup tersebut!"));
+        if (!await ctx.group(groupJid).catch(() => null)) return await ctx.reply(quote("❎ Grup tidak valid atau bot tidak ada di grup tersebut!"));
 
         try {
             const groupId = ctx.getId(groupJid) || null;
@@ -28,11 +29,27 @@ module.exports = {
             await db.delete(`group.${groupId}.sewa`);
             await db.delete(`group.${groupId}.sewaExpiration`);
 
-            if (groupMetadata?.owner) await ctx.sendMessage(groupMetadata.owner, {
-                text: quote(`🎉 Sewa bot untuk grup ${groupMetadata.subject} telah dihentikan oleh Owner!`)
+            const flag = tools.cmd.parseFlag(ctx.args.join(" "), {
+                "-s": {
+                    type: "boolean",
+                    key: "silent"
+                }
             });
+            if (!flag?.silent && groupOwner) {
+                const groupOwner = (await ctx.group(groupJid)).owner().catch(() => null);
+                const groupMentions = [{
+                    groupJid: `${group.id}@g.us`,
+                    groupSubject: (await ctx.group(groupJid)).name().catch(() => null)
+                }];
+                await ctx.sendMessage(groupOwner, {
+                    text: quote(`📢 Sewa bot untuk grup @${groupMentions.groupJid} telah dihentikan oleh Owner!`),
+                    contextInfo: {
+                        groupMentions
+                    }
+                });
+            }
 
-            return await ctx.reply(quote(`✅ Berhasil menghapus sewa bot untuk grup ${groupMetadata.subject}!`));
+            return await ctx.reply(quote(`✅ Berhasil menghapus sewa bot untuk grup ini!`));
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);
         }

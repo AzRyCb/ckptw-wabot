@@ -5,6 +5,7 @@ const {
 
 module.exports = {
     name: "claim",
+    aliases: ["bonus", "klaim"],
     category: "profile",
     code: async (ctx) => {
         const input = ctx.args.join(" ") || null;
@@ -30,10 +31,10 @@ module.exports = {
         if (level < claim.level) return await ctx.reply(quote(`❎ Kamu perlu mencapai level ${claim.level} untuk mengklaim hadiah ini. Levelmu saat ini adalah ${level}.`));
 
         const currentTime = Date.now();
+
         const lastClaim = (userDb?.lastClaim ?? {})[input] || 0;
         const timePassed = currentTime - lastClaim;
         const remainingTime = claim.cooldown - timePassed;
-
         if (remainingTime > 0) return await ctx.reply(quote(`⏳ Kamu telah mengklaim hadiah ${input}. Tunggu ${tools.msg.convertMsToDuration(remainingTime)} untuk mengklaim lagi.`));
 
         try {

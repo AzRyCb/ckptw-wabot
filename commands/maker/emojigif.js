@@ -20,11 +20,11 @@ module.exports = {
 
         if (!emoji) return await ctx.reply(
             `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            quote(tools.msg.generateCmdExample(ctx.used, "😱 🤓"))
+            quote(tools.msg.generateCmdExample(ctx.used, "😱"))
         );
 
         try {
-            const result = tools.api.createUrl("skyzopedia", "/tools/emojitogif", {
+            const result = tools.api.createUrl("https://restapi-v2.simplebot.my.id", "/tools/emojitogif", {
                 emoji
             });
             const sticker = new Sticker(result, {

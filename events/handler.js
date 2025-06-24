@@ -21,7 +21,7 @@ async function handleWelcome(bot, m, type, isSimulate = false) {
         const isWelcome = type === Events.UserJoin;
         const userTag = `@${bot.getId(jid)}`;
         const customText = isWelcome ? groupDb?.text?.welcome : groupDb?.text?.goodbye;
-        const metadata = await bot.core.groupMetadata(groupJid);
+        const metadata = await bot.core.groupMetadata(groupJid).catch(() => null);
         const text = customText ?
             customText
             .replace(/%tag%/g, userTag)
@@ -30,26 +30,24 @@ async function handleWelcome(bot, m, type, isSimulate = false) {
             (isWelcome ?
                 quote(`👋 Selamat datang ${userTag} di grup ${metadata.subject}!`) :
                 quote(`👋 Selamat tinggal, ${userTag}!`));
-
         const profilePictureUrl = await bot.core.profilePictureUrl(jid, "image").catch(() => "https://i.pinimg.com/736x/70/dd/61/70dd612c65034b88ebf474a52ccc70c4.jpg");
-        const contextInfo = {
-            mentionedJid: [jid],
-            isForwarded: true,
-            forwardedNewsletterMessageInfo: {
-                newsletterJid: config.bot.newsletterJid,
-                newsletterName: config.bot.name
-            },
-            externalAdReply: {
-                title: config.bot.name,
-                body: config.bot.version,
-                mediaType: 1,
-                thumbnailUrl: profilePictureUrl
-            }
-        };
 
         await bot.core.sendMessage(groupJid, {
             text,
-            contextInfo
+            contextInfo: {
+                mentionedJid: [jid],
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: config.bot.newsletterJid,
+                    newsletterName: config.bot.name
+                },
+                externalAdReply: {
+                    title: config.bot.name,
+                    body: config.bot.version,
+                    mediaType: 1,
+                    thumbnailUrl: profilePictureUrl
+                }
+            }
         }, {
             quoted: tools.cmd.fakeMetaAiQuotedText(`Event: ${type}`)
         });
@@ -69,12 +67,12 @@ async function addWarning(ctx, groupDb, senderJid, groupId) {
 
     const warnings = groupDb?.warnings || {};
     const current = warnings[senderId] || 0;
+    const maxwarnings = groupDb?.maxwarnings || 3;
+
     const newWarning = current + 1;
     warnings[senderId] = newWarning;
+    await db.set(`group.${groupId}.warnings`, warnings);
 
-    await db.set(`group.${groupId}.warnings`, newWarning);
-
-    const maxwarnings = groupDb?.maxwarnings || 3;
     await ctx.reply({
         text: quote(`⚠️ Warning ${newWarning}/${maxwarnings} untuk @${senderId}!`),
         mentions: [senderJid]
@@ -82,7 +80,7 @@ async function addWarning(ctx, groupDb, senderJid, groupId) {
 
     if (newWarning >= maxwarnings) {
         await ctx.reply(quote(`⛔ Kamu telah menerima ${maxwarnings} warning dan akan dikeluarkan dari grup!`));
-        if (systemRestrict) await ctx.group().kick([senderJid]);
+        if (!config.system.restrict) await ctx.group().kick([senderJid]);
         delete warnings[senderId];
         await db.set(`group.${groupId}.warnings`, warnings);
     }
@@ -141,7 +139,7 @@ module.exports = (bot) => {
 
         // Pengecekan mute pada grup
         const muteList = groupDb?.mute || [];
-        if (muteList.includes(senderId)) return await ctx.deleteMessage(m.key);
+        if (muteList.includes(senderId)) await ctx.deleteMessage(m.key);
 
         isGroup ? consolefy.info(`Incoming message from group: ${groupId}, by: ${senderId}`) : consolefy.info(`Incoming message from: ${senderId}`); // Log pesan masuk
 
@@ -364,7 +362,7 @@ module.exports = (bot) => {
                     }]
                 }
             }, {
-                quoted: tools.cmd.fakeMetaAiQuotedText(`Bot tidak dapat menerima panggilan ${call.isVideo ? "video" : "suara"}. Jika kamu memerlukan bantuan, silakan menghubungi Owner!`)
+                quoted: tools.cmd.fakeMetaAiQuotedText(`Bot tidak dapat menerima panggilan ${call.isVideo ? "video" : "suara"}! Jika kamu memerlukan bantuan, silakan menghubungi Owner.`)
             });
         }
     });

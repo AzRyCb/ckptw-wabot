@@ -26,7 +26,6 @@ module.exports = {
         });
 
         if (accountId === config.bot.id) return await ctx.reply(quote(`❎ Tidak bisa memberikan warning ke bot.`));
-
         if (accountJid === await ctx.group().owner()) return await ctx.reply(quote("❎ Tidak bisa memberikan warning ke admin grup!"));
 
         try {
@@ -45,7 +44,6 @@ module.exports = {
             }
 
             warnings[accountId] = newWarning;
-
             await db.set(`group.${groupId}.warnings`, warnings);
 
             return await ctx.reply(quote(`✅ Warning diberikan! Sekarang warning @${accountId} menjadi ${newWarning}/${maxwarnings}.`), {

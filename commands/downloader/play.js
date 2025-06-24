@@ -19,7 +19,7 @@ module.exports = {
             `${quote(tools.msg.generateCmdExample(ctx.used, "one last kiss - hikaru utada -i 8 -s spotify"))}\n` +
             quote(tools.msg.generatesFlagInfo({
                 "-i <number>": "Pilihan pada data indeks",
-                "-s <text>": "Sumber untuk memutar lagu (tersedia: soundcloud, spotify, tidal, youtube | default: youtube)"
+                "-s <text>": "Sumber untuk memutar lagu (tersedia: soundcloud, spotify, youtube | default: youtube)"
             }))
         );
 
@@ -39,10 +39,10 @@ module.exports = {
                 }
             });
 
-            const searchIndex = flag.index || 0;
-            const query = flag.input;
-            let source = flag.source || "youtube";
-            if (!["soundcloud", "spotify", "tidal", "youtube"].includes(source)) source = "youtube";
+            const searchIndex = flag?.index || 0;
+            const query = flag?.input;
+            let source = flag?.source || "youtube";
+            if (!["soundcloud", "spotify", "youtube"].includes(source)) source = "youtube";
 
             if (source === "soundcloud") {
                 const searchApiUrl = tools.api.createUrl("archive", "/api/search/soundcloud", {
@@ -111,11 +111,10 @@ module.exports = {
                     config.msg.footer
                 );
 
-                const downloadApiUrl = tools.api.createUrl("zell", "/download/youtube", {
-                    url: searchResult.link,
-                    format: "mp3"
+                const downloadApiUrl = tools.api.createUrl("archive", "/api/download/ytmp3", {
+                    url: searchResult.link
                 });
-                const downloadResult = (await axios.get(downloadApiUrl)).data.download;
+                const downloadResult = (await axios.get(downloadApiUrl)).data.result.audio_url;
 
                 return await ctx.reply({
                     audio: {

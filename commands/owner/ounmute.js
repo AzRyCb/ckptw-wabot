@@ -29,17 +29,14 @@ module.exports = {
         });
 
         if (accountId === config.bot.id) return await ctx.reply(quote(`❎ Ketik ${monospace(`${ctx.used.prefix + ctx.used.command} bot`)} untuk me-unmute bot.`));
-
         if (accountJid === await ctx.group().owner()) return await ctx.reply(quote("❎ Dia adalah owner grup!"));
 
         try {
             let muteList = await db.get(`group.${groupId}.mute`) || [];
-
             muteList = muteList.filter(item => item !== accountId);
-
             await db.set(`group.${groupId}.mute`, muteList);
 
-            return await ctx.reply(quote("✅ Berhasil me-unmute pengguna dari grup ini!"));
+            return await ctx.reply(quote("✅ Berhasil me-unmute pengguna itu dari grup ini!"));
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);
         }

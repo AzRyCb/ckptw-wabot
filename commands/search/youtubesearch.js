@@ -27,6 +27,7 @@ module.exports = {
             const resultText = result.map(r =>
                 `${quote(`Judul: ${r.title}`)}\n` +
                 `${quote(`Kanal: ${r.channel}`)}\n` +
+                `${quote(`Durasi: ${r.duration}`)}\n` +
                 `${quote(`URL: ${r.link}`)}`
             ).join(
                 "\n" +

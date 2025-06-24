@@ -5,28 +5,31 @@ const axios = require("axios");
 const mime = require("mime-types");
 
 module.exports = {
-    name: "instagramstoriesdl",
-    aliases: ["igstories", "igstoriesdl", "instagramstories"],
+    name: "pinterestdl",
+    aliases: ["pindl", "pintdl"],
     category: "downloader",
     permissions: {
         coin: 10
     },
     code: async (ctx) => {
-        const input = ctx.args.join(" ") || null;
+        const url = ctx.args[0] || null;
 
-        if (!input) return await ctx.reply(
+        if (!url) return await ctx.reply(
             `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            quote(tools.msg.generateCmdExample(ctx.used, "itsreimau"))
+            quote(tools.msg.generateCmdExample(ctx.used, "https://id.pinterest.com/pin/313422455339425808"))
         );
 
+        const isUrl = await tools.cmd.isUrl(url);
+        if (!isUrl) return await ctx.reply(config.msg.urlInvalid);
+
         try {
-            const apiUrl = tools.api.createUrl("bk9", "/download/igs", {
-                username: input
+            const apiUrl = tools.api.createUrl("archive", "/api/download/pinterest", {
+                url
             });
-            const result = Array.from(new Map((await axios.get(apiUrl)).data.BK9.map(media => [media.url, media])).values());
+            const result = (await axios.get(apiUrl)).data.result;
 
             for (const media of result) {
-                const isImage = media.type === "image";
+                const isImage = media.format === "JPG";
                 const mediaType = isImage ? "image" : "video";
                 const extension = isImage ? "jpg" : "mp4";
 

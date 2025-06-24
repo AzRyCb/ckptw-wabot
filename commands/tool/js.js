@@ -8,7 +8,7 @@ const {
 
 module.exports = {
     name: "js",
-    aliases: ["node", "javascript"],
+    aliases: ["javascript", "node"],
     category: "tool",
     permissions: {
         coin: 10
@@ -62,7 +62,7 @@ module.exports = {
                 }, 10000);
             });
 
-            await ctx.reply(monospace(output));
+            return await ctx.reply(monospace(output));
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);
         }

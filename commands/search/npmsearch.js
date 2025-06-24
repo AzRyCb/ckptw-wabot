@@ -26,8 +26,6 @@ module.exports = {
 
             const resultText = result.map(r =>
                 `${quote(`Nama: ${r.name}`)}\n` +
-                `${quote(`Dekripsi: ${r.description}`)}\n` +
-                `${quote(`Pembuat: ${r.author}`)}\n` +
                 `${quote(`Versi: ${r.version}`)}\n` +
                 `${quote(`URL: ${r.npmLink}`)}`
             ).join(

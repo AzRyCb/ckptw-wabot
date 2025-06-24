@@ -11,7 +11,7 @@ module.exports = {
     },
     code: async (ctx) => {
         try {
-            const users = (await db.toJSON()).user;
+            const users = db.get("user");
             const bannedUsers = [];
 
             for (const userId in users) {
@@ -30,7 +30,7 @@ module.exports = {
             });
 
             return await ctx.reply({
-                text: `${resultText || config.msg.notFound}` +
+                text: `${resultText.trim() || config.msg.notFound}\n` +
                     "\n" +
                     config.msg.footer,
                 mentions: userMentions
