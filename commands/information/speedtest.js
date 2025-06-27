@@ -1,10 +1,4 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const axios = require("axios");
-const {
-    performance
-} = require("node:perf_hooks");
 
 module.exports = {
     name: "speedtest",
@@ -13,17 +7,18 @@ module.exports = {
     code: async (ctx) => {
         try {
             const latencyStart = performance.now();
-            const testMsg = await ctx.reply(quote("🚀 Menguji latency..."));
+            const testMsg = await ctx.reply(formatter.quote("🚀 Menguji latency..."));
             const latency = performance.now() - latencyStart;
 
-            await ctx.editMessage(testMsg.key, quote("📥 Menguji kecepatan download..."));
+            await ctx.editMessage(testMsg.key, formatter.quote("📥 Menguji kecepatan download..."));
             const downloadStart = performance.now();
-            const downloadUrl = tools.api.createUrl("https://github.com", "/itsreimau/ckptw-wabot/raw/master/README.md");
+            const downloadUrl = tools.api.createUrl("https://github.com", "/itsreimau/gaxtawu/raw/master/README.md");
             const downloadResponse = await axios.get(downloadUrl);
-            const downloadSize = downloadResponse.headers["content-length"] / 1024;
+            const downloadSize = downloadResponse.headers["content-length"];
             const downloadTime = (performance.now() - downloadStart) / 1000;
+            const downloadSpeed = downloadSize / downloadTime;
 
-            await ctx.editMessage(testMsg.key, quote("📤 Menguji kecepatan upload..."));
+            await ctx.editMessage(testMsg.key, formatter.quote("📤 Menguji kecepatan upload..."));
             const uploadStart = performance.now();
             const uploadData = Buffer.alloc(1024 * 1024);
             const uploadUrl = tools.api.createUrl("https://httpbin.org", "/post");
@@ -33,11 +28,12 @@ module.exports = {
                 }
             });
             const uploadTime = (performance.now() - uploadStart) / 1000;
+            const uploadSpeed = uploadData.length / uploadTime;
 
             return await ctx.editMessage(testMsg.key,
-                `${quote(`Latency: ${tools.msg.convertMsToDuration(latency)}`)}\n` +
-                `${quote(`Download: ${tools.msg.formatSize(downloadTime)}/s`)}\n` +
-                `${quote(`Upload: ${tools.msg.formatSize(uploadTime)}/s`)}\n` +
+                `${formatter.quote(`Latency: ${tools.msg.convertMsToDuration(latency)}`)}\n` +
+                `${formatter.quote(`Download: ${tools.msg.formatSizePerSecond(downloadSpeed)}`)}\n` +
+                `${formatter.quote(`Upload: ${tools.msg.formatSizePerSecond(uploadSpeed)}`)}\n` +
                 "\n" +
                 config.msg.footer
             );

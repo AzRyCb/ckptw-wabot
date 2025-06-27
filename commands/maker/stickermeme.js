@@ -1,7 +1,4 @@
 const {
-    quote
-} = require("@itsreimau/ckptw-mod");
-const {
     Sticker,
     StickerTypes
 } = require("wa-sticker-formatter");
@@ -17,17 +14,17 @@ module.exports = {
         const input = ctx.args.join(" ") || null;
 
         if (!input) return await ctx.reply(
-            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            quote(tools.msg.generateCmdExample(ctx.used, "get in the fucking robot|shinji!"))
+            `${formatter.quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
+            formatter.quote(tools.msg.generateCmdExample(ctx.used, "get in the fucking robot|shinji!"))
         );
 
         const messageType = ctx.getMessageType();
         const [checkMedia, checkQuotedMedia] = await Promise.all([
             tools.cmd.checkMedia(messageType, ["image", "sticker"]),
-            tools.cmd.checkQuotedMedia(ctx.quoted, ["image", "sticker"])
+            tools.cmd.checkQuotedMedia(ctx?.quoted, ["image", "sticker"])
         ]);
 
-        if (!checkMedia && !checkQuotedMedia) return await ctx.reply(quote(tools.msg.generateInstruction(["send", "reply"], ["image", "sticker"])));
+        if (!checkMedia && !checkQuotedMedia) return await ctx.reply(formatter.quote(tools.msg.generateInstruction(["send", "reply"], ["image", "sticker"])));
 
         try {
             let [top, bottom] = input.split("|").map(i => i.trim());

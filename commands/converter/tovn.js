@@ -1,6 +1,3 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const mime = require("mime-types");
 
 module.exports = {
@@ -11,10 +8,10 @@ module.exports = {
         coin: 10
     },
     code: async (ctx) => {
-        if (!await tools.cmd.checkQuotedMedia(ctx.quoted, ["audio"])) return await ctx.reply(quote(tools.msg.generateInstruction(["reply"], ["audio"])));
+        if (!await tools.cmd.checkQuotedMedia(ctx?.quoted, ["audio"])) return await ctx.reply(formatter.quote(tools.msg.generateInstruction(["reply"], ["audio"])));
 
         try {
-            const result = await ctx.quoted.media.toBuffer()
+            const result = await ctx.quoted.media.toBuffer();
 
             return await ctx.reply({
                 audio: result,

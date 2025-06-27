@@ -1,6 +1,3 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const axios = require("axios");
 const mime = require("mime-types");
 
@@ -15,8 +12,8 @@ module.exports = {
         const url = ctx.args[0] || null;
 
         if (!url) return await ctx.reply(
-            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            quote(tools.msg.generateCmdExample(ctx.used, "https://www.tiktok.com/@japanese_songs2/video/7472130814805822726"))
+            `${formatter.quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
+            formatter.quote(tools.msg.generateCmdExample(ctx.used, "https://www.tiktok.com/@japanese_songs2/video/7472130814805822726"))
         );
 
         const isUrl = await tools.cmd.isUrl(url);
@@ -28,7 +25,7 @@ module.exports = {
             });
             const result = (await axios.get(apiUrl)).data.result.media;
             const video = result.play;
-            const images = result?.image_slide;
+            const images = result?.image_slide || [];
 
             if (images) {
                 for (const image of images) {
@@ -45,7 +42,7 @@ module.exports = {
                         url: video
                     },
                     mimetype: mime.lookup("mp4"),
-                    caption: `${quote(`URL: ${url}`)}\n` +
+                    caption: `${formatter.quote(`URL: ${url}`)}\n` +
                         "\n" +
                         config.msg.footer
                 });

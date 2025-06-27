@@ -1,6 +1,3 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const axios = require("axios");
 const mime = require("mime-types");
 
@@ -15,9 +12,9 @@ module.exports = {
         const input = ctx.args.join(" ") || null;
 
         if (!input) return await ctx.reply(
-            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            `${quote(tools.msg.generateCmdExample(ctx.used, "https://www.youtube.com/watch?v=0Uhh62MUEic -d"))}\n` +
-            quote(tools.msg.generatesFlagInfo({
+            `${formatter.quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
+            `${formatter.quote(tools.msg.generateCmdExample(ctx.used, "https://www.youtube.com/watch?v=0Uhh62MUEic -d"))}\n` +
+            formatter.quote(tools.msg.generatesFlagInfo({
                 "-d": "Kirim sebagai dokumen"
             }))
         );
@@ -40,13 +37,14 @@ module.exports = {
             });
             const result = (await axios.get(apiUrl)).data.result;
 
-            if (flag?.document) return await ctx.reply({
+            const document = flag?.document || false;
+            if (document) return await ctx.reply({
                 document: {
                     url: result.audio_url
                 },
                 fileName: `${result.title}.mp3`,
                 mimetype: mime.lookup("mp3"),
-                caption: `${quote(`URL: ${url}`)}\n` +
+                caption: `${formatter.quote(`URL: ${url}`)}\n` +
                     "\n" +
                     config.msg.footer
             });

@@ -1,6 +1,3 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const mime = require("mime-types");
 
 module.exports = {
@@ -14,17 +11,17 @@ module.exports = {
         const input = ctx.args.join(" ") || null;
 
         if (!input) return await ctx.reply(
-            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            quote(tools.msg.generateCmdExample(ctx.used, "make it evangelion art style"))
+            `${formatter.quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
+            formatter.quote(tools.msg.generateCmdExample(ctx.used, "make it evangelion art style"))
         );
 
         const messageType = ctx.getMessageType();
         const [checkMedia, checkQuotedMedia] = await Promise.all([
             tools.cmd.checkMedia(messageType, "image"),
-            tools.cmd.checkQuotedMedia(ctx.quoted, "image")
+            tools.cmd.checkQuotedMedia(ctx?.quoted, "image")
         ]);
 
-        if (!checkMedia && !checkQuotedMedia) return await ctx.reply(quote(tools.msg.generateInstruction(["send", "reply"], "image")));
+        if (!checkMedia && !checkQuotedMedia) return await ctx.reply(formatter.quote(tools.msg.generateInstruction(["send", "reply"], "image")));
 
         try {
             const buffer = await ctx.msg.media.toBuffer() || await ctx.quoted.media.toBuffer();

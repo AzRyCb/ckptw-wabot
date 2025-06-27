@@ -3,6 +3,9 @@ require("./config.js");
 const pkg = require("./package.json");
 const tools = require("./tools/exports.js");
 const {
+    Formatter
+} = require("@itsreimau/gktw");
+const {
     Consolefy
 } = require("@mengkodingan/consolefy");
 const CFonts = require("cfonts");
@@ -19,15 +22,15 @@ const c = new Consolefy({
 // Inisialisasi SimplDB untuk Database
 const dbFile = path.join(__dirname, "database.json");
 if (!fs.existsSync(dbFile)) fs.writeFileSync(dbFile, "{}", "utf8");
-const db = new SimplDB();
 
 // Tetapkan variabel global
 config.bot.version = `v${pkg.version}`;
 Object.assign(global, {
     config,
-    tools,
     consolefy: c,
-    db
+    db: new SimplDB(),
+    formatter: Formatter,
+    tools
 });
 
 c.log("Starting..."); // Logging proses awal

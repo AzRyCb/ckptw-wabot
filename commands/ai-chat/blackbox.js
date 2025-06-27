@@ -1,6 +1,3 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
 const axios = require("axios");
 
 module.exports = {
@@ -11,18 +8,18 @@ module.exports = {
         coin: 10
     },
     code: async (ctx) => {
-        const input = ctx.args.join(" ") || ctx.quoted?.conversation || Object.values(ctx.quoted).map(q => q?.text || q?.caption).find(Boolean) || null;
+        const input = ctx.args.join(" ") || ctx?.quoted?.conversation || (ctx.quoted && ((Object.values(ctx.quoted).find(v => v?.text || v?.caption)?.text) || (Object.values(ctx.quoted).find(v => v?.text || v?.caption)?.caption))) || null;
 
         if (!input) return await ctx.reply(
-            `${quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
-            `${quote(tools.msg.generateCmdExample(ctx.used, "apa itu bot whatsapp?"))}\n` +
-            quote(tools.msg.generateNotes(["AI ini dapat melihat gambar dan menjawab pertanyaan tentang gambar tersebut.", "Balas atau quote pesan untuk menjadikan teks sebagai input target, jika teks memerlukan baris baru."]))
+            `${formatter.quote(tools.msg.generateInstruction(["send"], ["text"]))}\n` +
+            `${formatter.quote(tools.msg.generateCmdExample(ctx.used, "apa itu bot whatsapp?"))}\n` +
+            formatter.quote(tools.msg.generateNotes(["AI ini dapat melihat gambar dan menjawab pertanyaan tentang gambar tersebut.", "Balas atau quote pesan untuk menjadikan teks sebagai input target, jika teks memerlukan baris baru."]))
         );
 
         const messageType = ctx.getMessageType();
         const [checkMedia, checkQuotedMedia] = await Promise.all([
             tools.cmd.checkMedia(messageType, "image"),
-            tools.cmd.checkQuotedMedia(ctx.quoted, "image")
+            tools.cmd.checkQuotedMedia(ctx?.quoted, "image")
         ]);
 
         try {

@@ -1,11 +1,6 @@
-// Impor modul dan dependensi yang diperlukan
-const {
-    monospace,
-    quote
-} = require("@itsreimau/ckptw-mod");
-
 function convertMsToDuration(ms) {
-    if (ms < 1000) return "kurang satu detik";
+    if (ms < 1) return "0 milidetik";
+    if (ms < 1000) return `${Math.floor(ms)} milidetik`;
 
     const years = Math.floor(ms / (1000 * 60 * 60 * 24 * 365.25));
     const months = Math.floor((ms / (1000 * 60 * 60 * 24 * 30.44)) % 12);
@@ -57,11 +52,32 @@ function formatSize(byteCount) {
     return `${size.toFixed(2)} ${units[index]}`;
 }
 
+function formatSizePerSecond(byteCount) {
+    if (!byteCount) return "0 yBytes/s";
+
+    const units = ["yBytes", "zBytes", "aBytes", "fBytes", "pBytes", "nBytes", "µBytes", "mBytes", "Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+
+    let index = 8;
+    let size = byteCount;
+
+    while (size < 1 && index > 0) {
+        size *= 1024;
+        index--;
+    }
+
+    while (size >= 1024 && index < units.length - 1) {
+        size /= 1024;
+        index++;
+    }
+
+    return `${size.toFixed(2)} ${units[index]}/s`;
+}
+
 function generateCmdExample(used, args) {
     if (!used) return "'used' harus diberikan!";
     if (!args) return "'args' harus diberikan!";
 
-    const cmdMsg = `Contoh: ${monospace(`${used.prefix + used.command} ${args}`)}`;
+    const cmdMsg = `Contoh: ${formatter.monospace(`${used.prefix + used.command} ${args}`)}`;
     return cmdMsg;
 }
 
@@ -112,7 +128,7 @@ function generatesFlagInfo(flags) {
     if (typeof flags !== "object" || !flags) return "'flags' harus berupa objek!";
 
     const flagInfo = "Flag:\n" +
-        Object.entries(flags).map(([flag, description]) => quote(`• ${monospace(flag)}: ${description}`)).join("\n");
+        Object.entries(flags).map(([flag, description]) => formatter.quote(`• ${formatter.monospace(flag)}: ${description}`)).join("\n");
     return flagInfo;
 }
 
@@ -120,7 +136,7 @@ function generateNotes(notes) {
     if (!Array.isArray(notes)) return "'notes' harus berupa string!";
 
     const notesMsg = "Catatan:\n" +
-        notes.map(note => quote(`• ${note}`)).join("\n");
+        notes.map(note => formatter.quote(`• ${note}`)).join("\n");
     return notesMsg;
 }
 
@@ -134,6 +150,7 @@ module.exports = {
     convertMsToDuration,
     convertSecondToTimecode,
     formatSize,
+    formatSizePerSecond,
     generateCmdExample,
     generateInstruction,
     generatesFlagInfo,

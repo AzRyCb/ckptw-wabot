@@ -1,7 +1,4 @@
-const {
-    quote
-} = require("@itsreimau/ckptw-mod");
-const ezgif = require("ezgif-node");
+const axios = require("axios");
 const mime = require("mime-types");
 
 module.exports = {
@@ -11,15 +8,15 @@ module.exports = {
         coin: 10
     },
     code: async (ctx) => {
-        if (!await tools.cmd.checkQuotedMedia(ctx.quoted, ["sticker"])) return await ctx.reply(quote(tools.msg.generateInstruction(["reply"], ["sticker"])));
+        if (!await tools.cmd.checkQuotedMedia(ctx?.quoted, ["sticker"])) return await ctx.reply(formatter.quote(tools.msg.generateInstruction(["reply"], ["sticker"])));
 
         try {
-            const buffer = await ctx.quoted.media.toBuffer()
-            const result = await ezgif.convert({
-                type: "webp-gif",
-                file: buffer,
-                filename: "upload.webp"
-            });
+            const buffer = await ctx.quoted.media.toBuffer();
+            const apiUrl = tools.api.createUrl("https://nekochii-converter.hf.space", "/webp2gif");
+            const result = (await axios.post(apiUrl, {
+                file: buffer.toString("base64"),
+                json: true
+            })).data.result;
 
             return await ctx.reply({
                 video: {

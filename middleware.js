@@ -1,9 +1,8 @@
 // Impor modul dan dependensi yang diperlukan
 const {
-    Cooldown,
-    monospace,
-    quote
-} = require("@itsreimau/ckptw-mod");
+    Cooldown
+} = require("@itsreimau/gktw");
+const moment = require("moment-timezone");
 
 // Fungsi untuk mengecek apakah pengguna memiliki cukup koin sebelum menggunakan perintah tertentu
 async function checkCoin(requiredCoin, userDb, senderId, isOwner) {
@@ -31,8 +30,10 @@ module.exports = (bot) => {
         const groupDb = await db.get(`group.${groupId}`) || {};
 
         // Pengecekan mode bot (group, private, self)
-        if ((botDb?.mode === "group" && isPrivate) || (botDb?.mode === "private" && isGroup) || (botDb?.mode === "self" && !isOwner)) return;
-        if ((groupDb?.mutebot === true && (!isOwner && !await ctx.group().isSenderAdmin())) || (groupDb?.mutebot === "owner" && !isOwner)) return;
+        if ((groupDb?.mutebot === true && !isOwner && !await ctx.group().isSenderAdmin()) || (groupDb?.mutebot === "owner" && !isOwner)) return;
+        if (botDb?.mode === "group" && isPrivate) return;
+        if (botDb?.mode === "private" && isGroup) return;
+        if (botDb?.mode === "self" && !isOwner) return;
 
         // Pengecekan mute pada grup
         const muteList = groupDb?.mute || [];
@@ -49,9 +50,9 @@ module.exports = (bot) => {
             if (userDb?.autolevelup) {
                 const profilePictureUrl = await ctx.core.profilePictureUrl(ctx.sender.jid, "image").catch(() => "https://i.pinimg.com/736x/70/dd/61/70dd612c65034b88ebf474a52ccc70c4.jpg");
                 await ctx.reply({
-                    text: `${quote(`Selamat! Kamu telah naik ke level ${newUserLevel}!`)}\n` +
+                    text: `${formatter.quote(`Selamat! Kamu telah naik ke level ${newUserLevel}!`)}\n` +
                         `${config.msg.readmore}\n` +
-                        quote(tools.msg.generateNotes([`Terganggu? Ketik ${monospace(`${ctx.used.prefix}setprofile autolevelup`)} untuk menonaktifkan pesan autolevelup.`])),
+                        formatter.quote(tools.msg.generateNotes([`Terganggu? Ketik ${formatter.monospace(`${ctx.used.prefix}setprofile autolevelup`)} untuk menonaktifkan pesan autolevelup.`])),
                     contextInfo: {
                         externalAdReply: {
                             title: config.bot.name,
@@ -88,8 +89,13 @@ module.exports = (bot) => {
                 reaction: "💤"
             },
             {
+                key: "gamerestrict",
+                condition: groupDb?.option?.gamerestrict && isGroup && ctx.bot.cmd.has(ctx.used.command) && ctx.bot.cmd.get(ctx.used.command).category === "game",
+                msg: config.msg.gamerestrict,
+                reaction: "🎮"
+            }, {
                 key: "requireBotGroupMembership",
-                condition: config.system.requireBotGroupMembership && !isOwner && !userDb?.premium && ctx.used.command !== "botgroup" && config.bot.groupJid && !(ctx.group(config.bot.groupJid)).members().some((member) => ctx.getId(member.id) === senderJid),
+                condition: config.system.requireBotGroupMembership && !isOwner && !userDb?.premium && ctx.used.command !== "botgroup" && config.bot.groupJid && !await ctx.group(config.bot.groupJid).members().some((member) => ctx.getId(member.id) === senderJid),
                 msg: config.msg.botGroupMembership,
                 reaction: "🚫"
             },
@@ -100,10 +106,14 @@ module.exports = (bot) => {
                 reaction: "🔒"
             },
             {
-                key: "gamerestrict",
-                condition: groupDb?.option?.gamerestrict && isGroup && ctx.bot.cmd.has(ctx.used.command) && ctx.bot.cmd.get(ctx.used.command).category === "game",
-                msg: config.msg.gamerestrict,
-                reaction: "🎮"
+                key: "unavailableAtNight",
+                condition: (() => {
+                    const now = moment().tz(config.system.timeZone);
+                    const hour = now.hour();
+                    return config.system.unavailableAtNight && !isOwner && !userDb?.premium && hour >= 0 && hour < 6;
+                })(),
+                msg: config.msg.unavailableAtNight,
+                reaction: "😴"
             }
         ];
 
@@ -123,7 +133,7 @@ module.exports = (bot) => {
                     await ctx.reply(
                         `${msg}\n` +
                         `${config.msg.readmore}\n` +
-                        quote(tools.msg.generateNotes([`Respon selanjutnya akan berupa reaksi emoji '${reaction}'.`]))
+                        formatter.quote(tools.msg.generateNotes([`Respon selanjutnya akan berupa reaksi emoji '${reaction}'.`]))
                     );
                     return await db.set(`user.${senderId}.lastSentMsg.${key}`, now);
                 } else {
@@ -204,7 +214,7 @@ module.exports = (bot) => {
                     await ctx.reply(
                         `${msg}\n` +
                         `${config.msg.readmore}\n` +
-                        quote(tools.msg.generateNotes([`Respon selanjutnya akan berupa reaksi emoji '${reaction}'.`]))
+                        formatter.quote(tools.msg.generateNotes([`Respon selanjutnya akan berupa reaksi emoji '${reaction}'.`]))
                     );
                     return await db.set(`user.${senderId}.lastSentMsg.${key}`, now);
                 } else {
