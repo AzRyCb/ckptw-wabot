@@ -10,7 +10,7 @@ global.config = {
         name: "Neu-WaBot", // Nama bot
         prefix: /^[°•π÷×¶∆£¢€¥®™+✓_=|/~!?@#%^&.©^]/i, // Karakter awalan perintah yang diizinkan
         phoneNumber: "6283839203081", // Nomor telepon bot (Tidak perlu diisi jika menggunakan QR code)
-        thumbnail: "https://repository-images.githubusercontent.com/753096396/84e76ef0-ba19-4c87-8ec2-ea803b097479", // Gambar thumbnail bot
+        thumbnail: "https://www6.flamingtext.com/net-fu/proxy_form.cgi?&imageoutput=true&script=smurfs-logo&doScale=true&scaleWidth=800&scaleHeight=500&fontsize=100&text=Neu-WaBot", // Gambar thumbnail bot
         groupJid: "120363391379200206@g.us", // JID untuk group bot (Opsional, jika tidak menggunakan requireBotGroupMembership)
         newsletterJid: "120363370002595070@newsletter", // JID untuk saluran bot
 
