@@ -1,5 +1,3 @@
-const mime = require("mime-types");
-
 module.exports = {
     name: "screenshot",
     aliases: ["ss", "sshp", "sspc", "sstab", "ssweb"],
@@ -31,10 +29,10 @@ module.exports = {
                 image: {
                     url: result
                 },
-                mimetype: mime.lookup("jpg"),
-                caption: `${formatter.quote(`URL: ${url}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("jpg"),
+                caption: formatter.quote(`URL: ${url}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

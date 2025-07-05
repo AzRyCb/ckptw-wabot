@@ -17,13 +17,13 @@ module.exports = {
                 `${formatter.quote("─────")}\n` +
                 `${formatter.quote("https://paypal.me/itsreimau (PayPal)")}\n` +
                 `${formatter.quote("https://saweria.co/itsreimau (Saweria)")}\n` +
-                `${formatter.quote("https://trakteer.id/itsreimau (Trakteer)")}\n` +
-                "\n" +
-                config.msg.footer;
+                formatter.quote("https://trakteer.id/itsreimau (Trakteer)");
 
             return await ctx.reply({
                 text: text,
-                mentions: [ctx.sender.jid]
+                mentions: [ctx.sender.jid],
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);

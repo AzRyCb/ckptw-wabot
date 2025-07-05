@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "tiktoksearch",
@@ -26,7 +25,17 @@ module.exports = {
                 video: {
                     url: result
                 },
-                mimetype: mime.lookup("mp4")
+                mimetype: tools.mime.lookup("mp4"),
+                caption: formatter.quote(`Kueri: ${input}`),
+                footer: config.msg.footer,
+                buttons: [{
+                    buttonId: `${ctx.used.prefix + ctx.used.command} ${input}`,
+                    buttonText: {
+                        displayText: "Ambil Lagi"
+                    },
+                    type: 1
+                }],
+                headerType: 1
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

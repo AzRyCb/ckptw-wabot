@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "spotifydl",
@@ -29,10 +28,10 @@ module.exports = {
                 audio: {
                     url: result
                 },
-                mimetype: mime.lookup("mp3"),
-                caption: `${formatter.quote(`URL: ${url}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("mp3"),
+                caption: formatter.quote(`URL: ${url}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

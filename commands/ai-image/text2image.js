@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "text2image",
@@ -27,10 +26,17 @@ module.exports = {
                 image: {
                     url: result
                 },
-                mimetype: mime.lookup("jpg"),
-                caption: `${formatter.quote(`Prompt: ${input}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("jpg"),
+                caption: formatter.quote(`Prompt: ${input}`),
+                footer: config.msg.footer,
+                buttons: [{
+                    buttonId: `${ctx.used.prefix + ctx.used.command} ${input}`,
+                    buttonText: {
+                        displayText: "Ambil Lagi"
+                    },
+                    type: 1
+                }],
+                headerType: 1
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

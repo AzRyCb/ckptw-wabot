@@ -17,18 +17,18 @@ module.exports = {
             formatter.quote(tools.msg.generateNotes(["Balas atau quote pesan untuk menjadikan teks sebagai input target, jika teks memerlukan baris baru.", `Gunakan ${formatter.monospace("blacklist")} untuk memasukkan grup ke dalam blacklist. (Hanya berfungsi pada grup)`]))
         );
 
-        if (["b", "blacklist"].includes(input) && ctx.isGroup()) {
+        if (input === "blacklist" && ctx.isGroup()) {
             let blacklist = await db.get("bot.blacklistBroadcast") || [];
 
             const groupIndex = blacklist.indexOf(ctx.id);
             if (groupIndex > -1) {
                 blacklist.splice(groupIndex, 1);
                 await db.set("bot.blacklistBroadcast", blacklist);
-                return await ctx.reply("✅ Grup ini telah dihapus dari blacklist broadcast");
+                return await ctx.reply(formatter.quote("✅ Grup ini telah dihapus dari blacklist broadcast"));
             } else {
                 blacklist.push(ctx.id);
                 await db.set("bot.blacklistBroadcast", blacklist);
-                return await ctx.reply("✅ Grup ini telah ditambahkan ke blacklist broadcast");
+                return await ctx.reply(formatter.quote("✅ Grup ini telah ditambahkan ke blacklist broadcast"));
             }
         }
 

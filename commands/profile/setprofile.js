@@ -11,9 +11,13 @@ module.exports = {
             formatter.quote(tools.msg.generateNotes([`Ketik ${formatter.monospace(`${ctx.used.prefix + ctx.used.command} list`)} untuk melihat daftar.`]))
         );
 
-        if (["l", "list"].includes(input.toLowerCase())) {
+        if (input.toLowerCase() === "list") {
             const listText = await tools.list.get("setprofile");
-            return await ctx.reply(listText);
+            return await ctx.reply({
+                text: listText,
+                footer: config.msg.footer,
+                interactiveButtons: []
+            });
         }
 
         try {
@@ -47,7 +51,7 @@ module.exports = {
                     break;
                 }
                 default:
-                    return await ctx.reply(formatter.quote("❎ Teks tidak valid."));
+                    return await ctx.reply(formatter.quote(`❎ Setelan "${input}" tidak valid.`));
             }
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);

@@ -1,5 +1,3 @@
-const mime = require("mime-types");
-
 module.exports = {
     name: "videydl",
     aliases: ["videy"],
@@ -26,10 +24,10 @@ module.exports = {
                 video: {
                     url: result
                 },
-                mimetype: mime.lookup("mp4"),
-                caption: `${formatter.quote(`URL: ${url}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("mp4"),
+                caption: formatter.quote(`URL: ${url}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

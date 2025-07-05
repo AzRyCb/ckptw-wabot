@@ -13,18 +13,21 @@ module.exports = {
             formatter.quote(tools.msg.generateCmdExample(ctx.used, "user"))
         );
 
-        if (["l", "list"].includes(input)) {
+        if (input.toLowercase() === "list") {
             const listText = await tools.list.get("fixdb");
-            return await ctx.reply(listText);
+            return await ctx.reply({
+                text: listText,
+                footer: config.msg.footer,
+                interactiveButtons: []
+            });
         }
 
         try {
             const waitMsg = await ctx.reply(config.msg.wait);
-            const dbJSON = await db.toJSON();
             const data = {
-                user: dbJSON.user || {},
-                group: dbJSON.group || {},
-                menfess: dbJSON.menfess || {}
+                user: await db.get("user") || {},
+                group: await db.get("group") || {},
+                menfess: await db.get("menfess") || {}
             };
 
             const filteredData = (category, item) => {
@@ -140,7 +143,7 @@ module.exports = {
                     break;
 
                 default:
-                    return await ctx.reply(formatter.quote(`❎ Key "${input}" tidak valid!`));
+                    return await ctx.reply(formatter.quote(`❎ Data "${input}" tidak valid!`));
             }
 
             return await ctx.editMessage(waitMsg.key, formatter.quote(`✅ Database berhasil dibersihkan untuk ${input}!`));

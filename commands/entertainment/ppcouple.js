@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "ppcouple",
@@ -14,20 +13,22 @@ module.exports = {
         try {
             const result = (await axios.get(apiUrl)).data;
 
-            return await Promise.all([
-                ctx.reply({
-                    image: {
-                        url: result.male
+            return await ctx.reply({
+                album: [{
+                        image: {
+                            url: result.male
+                        },
+                        mimetype: tools.mime.lookup("jpeg")
                     },
-                    mimetype: mime.lookup("jpg")
-                }),
-                ctx.reply({
-                    image: {
-                        url: result.female
-                    },
-                    mimetype: mime.lookup("jpg")
-                })
-            ]);
+                    {
+                        image: {
+                            url: result.female
+                        },
+                        mimetype: tools.mime.lookup("jpeg")
+                    }
+                ],
+                caption: formatter.quote("Untukmu, tuan!")
+            });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);
         }

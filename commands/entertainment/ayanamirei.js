@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "ayanamirei",
@@ -18,7 +17,17 @@ module.exports = {
                 image: {
                     url: result.download_url
                 },
-                mimetype: mime.lookup("jpg")
+                mimetype: tools.mime.lookup("jpg"),
+                caption: formatter.quote("Those who hate themselves, cannot love or trust others."),
+                footer: config.msg.footer,
+                buttons: [{
+                    buttonId: ctx.used.prefix + ctx.used.command,
+                    buttonText: {
+                        displayText: "Ambil Lagi"
+                    },
+                    type: 1
+                }],
+                headerType: 1
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

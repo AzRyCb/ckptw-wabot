@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "mediafiredl",
@@ -30,10 +29,10 @@ module.exports = {
                     url: result.download_link
                 },
                 fileName: data.title,
-                mimetype: mime.lookup(data.mime_type) || "application/octet-stream",
-                caption: `${formatter.quote(`URL: ${url}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup(data.mime_type) || "application/octet-stream",
+                caption: formatter.quote(`URL: ${url}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

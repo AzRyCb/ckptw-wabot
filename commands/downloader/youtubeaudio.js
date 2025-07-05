@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "youtubeaudio",
@@ -54,17 +53,17 @@ module.exports = {
                     url: result.downloadUrl
                 },
                 fileName: `${result.title}.mp3`,
-                mimetype: mime.lookup("mp3"),
-                caption: `${formatter.quote(`URL: ${url}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("mp3"),
+                caption: formatter.quote(`URL: ${url}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
             });
 
             return await ctx.reply({
                 audio: {
                     url: result.downloadUrl
                 },
-                mimetype: mime.lookup("mp3")
+                mimetype: tools.mime.lookup("mp3")
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

@@ -17,9 +17,13 @@ module.exports = {
             formatter.quote(tools.msg.generateNotes([`Ketik ${formatter.monospace(`${ctx.used.prefix + ctx.used.command} list`)} untuk melihat daftar.`, "Balas atau quote pesan untuk menjadikan teks sebagai input target, jika teks memerlukan baris baru.", `Gunakan ${formatter.monospace("delete")} sebagai teks untuk menghapus teks yang disimpan sebelumnya.`]))
         );
 
-        if (["l", "list"].includes(key.toLowerCase())) {
+        if (key.toLowerCase() === "list") {
             const listText = await tools.list.get("settext");
-            return await ctx.reply(listText);
+            return await ctx.reply({
+                text: listText,
+                footer: config.msg.footer,
+                interactiveButtons: []
+            });
         }
 
         try {
@@ -36,7 +40,7 @@ module.exports = {
                     return await ctx.reply(formatter.quote(`❎ Teks '${key}' tidak valid!`));
             }
 
-            if (["d", "delete"].includes(text.toLowerCase())) {
+            if (text.toLowerCase() === "delete") {
                 await db.delete(setKey);
                 return await ctx.reply(formatter.quote(`🗑️ Pesan untuk teks '${key}' berhasil dihapus!`));
             }

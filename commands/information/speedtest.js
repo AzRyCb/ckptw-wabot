@@ -7,10 +7,8 @@ module.exports = {
     code: async (ctx) => {
         try {
             const latencyStart = performance.now();
-            const testMsg = await ctx.reply(formatter.quote("🚀 Menguji latency..."));
             const latency = performance.now() - latencyStart;
 
-            await ctx.editMessage(testMsg.key, formatter.quote("📥 Menguji kecepatan download..."));
             const downloadStart = performance.now();
             const downloadUrl = tools.api.createUrl("https://github.com", "/itsreimau/gaxtawu/raw/master/README.md");
             const downloadResponse = await axios.get(downloadUrl);
@@ -18,7 +16,6 @@ module.exports = {
             const downloadTime = (performance.now() - downloadStart) / 1000;
             const downloadSpeed = downloadSize / downloadTime;
 
-            await ctx.editMessage(testMsg.key, formatter.quote("📤 Menguji kecepatan upload..."));
             const uploadStart = performance.now();
             const uploadData = Buffer.alloc(1024 * 1024);
             const uploadUrl = tools.api.createUrl("https://httpbin.org", "/post");
@@ -30,13 +27,13 @@ module.exports = {
             const uploadTime = (performance.now() - uploadStart) / 1000;
             const uploadSpeed = uploadData.length / uploadTime;
 
-            return await ctx.editMessage(testMsg.key,
-                `${formatter.quote(`Latency: ${tools.msg.convertMsToDuration(latency)}`)}\n` +
-                `${formatter.quote(`Download: ${tools.msg.formatSizePerSecond(downloadSpeed)}`)}\n` +
-                `${formatter.quote(`Upload: ${tools.msg.formatSizePerSecond(uploadSpeed)}`)}\n` +
-                "\n" +
-                config.msg.footer
-            );
+            return await ctx.reply({
+                text: `${formatter.quote(`Latency: ${tools.msg.convertMsToDuration(latency)}`)}\n` +
+                    `${formatter.quote(`Download: ${tools.msg.formatSizePerSecond(downloadSpeed)}`)}\n` +
+                    formatter.quote(`Upload: ${tools.msg.formatSizePerSecond(uploadSpeed)}`),
+                footer: config.msg.footer,
+                interactiveButtons: []
+            });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error);
         }

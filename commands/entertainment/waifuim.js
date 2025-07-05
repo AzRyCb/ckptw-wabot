@@ -1,5 +1,3 @@
-const mime = require("mime-types");
-
 module.exports = {
     name: "waifuim",
     category: "entertainment",
@@ -9,9 +7,13 @@ module.exports = {
     code: async (ctx) => {
         const input = ctx.args.join(" ") || null;
 
-        if (["l", "list"].includes(input?.toLowerCase())) {
+        if (input?.toLowerCase() === "list") {
             const listText = await tools.list.get("waifuim");
-            return await ctx.reply(listText);
+            return await ctx.reply({
+                text: listText,
+                footer: config.msg.footer,
+                interactiveButtons: []
+            });
         }
 
         try {
@@ -23,10 +25,17 @@ module.exports = {
                 image: {
                     url: result
                 },
-                mimetype: mime.lookup("jpg"),
-                caption: `${formatter.quote(`Kategori: ${tools.msg.ucwords(waifuim)}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("jpg"),
+                caption: formatter.quote(`Kategori: ${tools.msg.ucwords(waifuim)}`),
+                footer: config.msg.footer,
+                buttons: [{
+                    buttonId: `${ctx.used.prefix + ctx.used.command} ${input || ""}`,
+                    buttonText: {
+                        displayText: "Ambil Lagi"
+                    },
+                    type: 1
+                }],
+                headerType: 1
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);

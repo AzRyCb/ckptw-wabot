@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mime = require("mime-types");
 
 module.exports = {
     name: "fufufafa",
@@ -17,10 +16,17 @@ module.exports = {
                 image: {
                     url: result.image_url
                 },
-                mimetype: mime.lookup("jpg"),
-                caption: `${formatter.quote(`Doksli: ${result.doksli}`)}\n` +
-                    "\n" +
-                    config.msg.footer
+                mimetype: tools.mime.lookup("jpg"),
+                caption: formatter.quote(`Doksli: ${result.doksli}`),
+                footer: config.msg.footer,
+                buttons: [{
+                    buttonId: ctx.used.prefix + ctx.used.command,
+                    buttonText: {
+                        displayText: "Ambil Lagi"
+                    },
+                    type: 1
+                }],
+                headerType: 1
             });
         } catch (error) {
             return await tools.cmd.handleError(ctx, error, true);
